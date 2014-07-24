@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.version          = "0.0.1"
   s.summary          = "Provides an Eye-Fi server for objective-c applications"
   s.description      = <<-DESC
-                        Provides an Eye-Fi server for objective-c applications
+                        Provides an Eye-Fi server for objective-c applications. This server can be used in combination with the Eye-Fi SD-Cards. See http://www.eyefi.com
                        DESC
   s.homepage         = "https://github.com/codewhisper/eye-fi-server"
   s.license          = 'GPL'
