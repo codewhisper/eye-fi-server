@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CWViewController : UIViewController
+@interface CWViewController : UIViewController <UITableViewDataSource>
 
 @end
