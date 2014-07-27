@@ -4,12 +4,12 @@ eye-fi-server
 Provides an Eye-Fi server for objective-c applications
 
 ## Usage
-1. To add the library to your project with Cocoapods, add this line to your Podfile:
+1. To add the library to your project with CocoaPods, add this line to your _Podfile_:
     ```
     pod 'CWEyeFiServer', :git => 'https://github.com/codewhisper/eye-fi-server.git'
     ```
 
-2. Import CWEyeFiServer.h, create server object and start. Make sure to add your
+2. Import _CWEyeFiServer.h_, create server object and start. Make sure to add your
 own upload key, usually you can find it in _~/Library/Eye-Fi/Settings.xml_
     ```objc
     #import "CWEyeFiServer.h"
@@ -25,3 +25,6 @@ own upload key, usually you can find it in _~/Library/Eye-Fi/Settings.xml_
     ```
 
 * Check the Example directory for a working example
+
+## Thanks
+The code was heavily influenced by [PhotoPad](https://github.com/Ignigena/PhotoPad), thanks!
