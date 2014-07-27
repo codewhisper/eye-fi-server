@@ -107,7 +107,9 @@
         CWEyeFiParser *eyeFiParser = [[CWEyeFiParser alloc] initWithData:_postData];
         [eyeFiParser parseData];
         
+#ifdef DEBUG
         NSLog(@"%@", eyeFiParser.method);
+#endif
         
         if ([eyeFiParser.method isEqualToString:@"StartSession"]) {
             
@@ -118,11 +120,11 @@
             NSString *transfermodetimestamp = [NSString stringWithFormat:@"%@", [eyeFiParser.values objectForKey:@"transfermodetimestamp"]];
             
             NSString *responseString = [NSString stringWithFormat:[CWEyeFiConnection stringForTemplate:@"StartSessionResponse"],
-                                     credential,
-                                     snonce,
-                                     transfermode,
-                                     transfermodetimestamp,
-                                     @"false"
+                                        credential,
+                                        snonce,
+                                        transfermode,
+                                        transfermodetimestamp,
+                                        @"false"
                                         ];
             
             NSData *responseData = [responseString dataUsingEncoding:NSUTF8StringEncoding];
@@ -180,15 +182,28 @@
     
     NSString *filePath = [uploadDirPath stringByAppendingPathComponent:filename];
     
-    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
-        _storeFile = nil;
-    } else {
+    BOOL fileExists = NO;
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
         if (![[NSFileManager defaultManager] createFileAtPath:filePath contents:nil attributes:nil]) {
+#ifdef DEBUG
             NSLog(@"Can't create file %@", filePath);
+#endif
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:CWNotificationFileStatus
+                                                                object:self
+                                                              userInfo:@{
+                                                                         @"path": [_storeFilePath stringByDeletingPathExtension],
+                                                                         @"status": @(FileStatusError)
+                                                                         }];
         } else {
-            NSLog(@"Create file %@", filePath);
+            fileExists = YES;
         }
-        
+    } else {
+        fileExists = YES;
+    }
+    
+    if (fileExists) {
         _storeFile = [NSFileHandle fileHandleForWritingAtPath:filePath];
         _storeFilePath = filePath;
         [_uploadedFiles addObject:_storeFile];
@@ -198,8 +213,7 @@
                                                           userInfo:@{
                                                                      @"path": [_storeFilePath stringByDeletingPathExtension],
                                                                      @"status": @(FileStatusUploading)
-                                                                     }
-         ];
+                                                                     }];
     }
 }
 
@@ -212,17 +226,28 @@
 - (void)processEndOfPartWithHeader:(MultipartMessageHeader *)header {
     [_storeFile closeFile];
     
-    NSLog(@"Close file %@", _storeFilePath);
-    
     if (_storeFilePath) {
         NSError *error;
         NSString *destination = nil;
         [Brett untarFileAtPath:_storeFilePath withError:&error destinationPath:&destination];
         
         if (error) {
-            NSLog(@"Error untaring file %@", _storeFilePath);
+#ifdef DEBUG
+            NSLog(@"Error untaring file %@: %@", _storeFilePath, error);
+#endif
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:CWNotificationFileStatus
+                                                                object:self
+                                                              userInfo:@{
+                                                                         @"path": [_storeFilePath stringByDeletingPathExtension],
+                                                                         @"status": @(FileStatusError),
+                                                                         @"error": error
+                                                                         }];
+            
         } else {
+#ifdef DEBUG
             NSLog(@"untarred file in %@", _storeFilePath);
+#endif
             
             // remove tar extension
             NSString *imagePath = [_storeFilePath stringByDeletingPathExtension];
@@ -232,8 +257,7 @@
                                                               userInfo:@{
                                                                          @"path": imagePath,
                                                                          @"status": @(FileStatusReady)
-                                                                         }
-             ];
+                                                                         }];
         }
     }
     

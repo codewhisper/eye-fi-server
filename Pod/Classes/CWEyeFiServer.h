@@ -11,7 +11,8 @@
 
 typedef enum {
     FileStatusUploading,
-    FileStatusReady
+    FileStatusReady,
+    FileStatusError
 } FileStatus;
 
 static NSString *CWNotificationFileStatus = @"com.codewhisper.EyeFiServer.FileStatusNotification";
