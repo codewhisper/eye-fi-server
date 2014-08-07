@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "CWEyeFiServer"
-  s.version          = "0.0.1"
+  s.version          = "0.0.2"
   s.summary          = "Provides an Eye-Fi server for objective-c applications"
   s.description      = <<-DESC
                         Provides an Eye-Fi server for objective-c applications. This server can be used in combination with the Eye-Fi SD-Cards. See http://www.eyefi.com
